@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "79499376498",
+    "project_id": "bigdream-e9045",
+    "storage_bucket": "bigdream-e9045.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:79499376498:android:3a828513617500d5a48feb",
+        "android_client_info": {
+          "package_name": "com.example.big_dream"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBdJfqE02J4Cb1PMz7isnIkw3K_kbC_Wy4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
