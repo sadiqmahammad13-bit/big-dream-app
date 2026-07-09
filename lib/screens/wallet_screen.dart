@@ -12,6 +12,13 @@ class WalletScreen extends StatefulWidget {
 class _WalletScreenState extends State<WalletScreen> {
   bool isClaiming = false;
 
+  bool canClaimToday(Timestamp? lastClaim) {
+    if (lastClaim == null) return true;
+    final last = lastClaim.toDate();
+    final now = DateTime.now();
+    return now.difference(last).inHours >= 24;
+  }
+
   Future<void> claimReward(int currentCoins) async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return;
@@ -25,6 +32,7 @@ class _WalletScreenState extends State<WalletScreen> {
         .doc(user.uid)
         .update({
       'coins': currentCoins + 50,
+      'lastClaim': FieldValue.serverTimestamp(),
     });
 
     setState(() {
@@ -76,6 +84,8 @@ class _WalletScreenState extends State<WalletScreen> {
 
                 final data = snapshot.data!.data() as Map<String, dynamic>?;
                 final coins = data?['coins'] ?? 0;
+                final lastClaim = data?['lastClaim'] as Timestamp?;
+                final canClaim = canClaimToday(lastClaim);
 
                 return SingleChildScrollView(
                   padding: const EdgeInsets.all(20),
@@ -125,15 +135,19 @@ class _WalletScreenState extends State<WalletScreen> {
                           "Daily Reward",
                           style: TextStyle(color: Colors.white),
                         ),
-                        subtitle: const Text(
-                          "Claim 50 FREE Coins",
-                          style: TextStyle(color: Colors.grey),
+                        subtitle: Text(
+                          canClaim
+                              ? "Claim 50 FREE Coins"
+                              : "Come back tomorrow!",
+                          style: const TextStyle(color: Colors.grey),
                         ),
                         trailing: ElevatedButton(
-                          onPressed:
-                              isClaiming ? null : () => claimReward(coins),
+                          onPressed: (isClaiming || !canClaim)
+                              ? null
+                              : () => claimReward(coins),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.amber,
+                            backgroundColor:
+                                canClaim ? Colors.amber : Colors.grey,
                           ),
                           child: isClaiming
                               ? const SizedBox(
@@ -144,9 +158,9 @@ class _WalletScreenState extends State<WalletScreen> {
                                     strokeWidth: 2,
                                   ),
                                 )
-                              : const Text(
-                                  "Claim",
-                                  style: TextStyle(color: Colors.black),
+                              : Text(
+                                  canClaim ? "Claim" : "Claimed",
+                                  style: const TextStyle(color: Colors.black),
                                 ),
                         ),
                       ),
